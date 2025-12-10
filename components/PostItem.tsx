@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import CommentThread from './CommentThread';
-import TranslateButton from './TranslateButton';
 
 export type Post = {
   post_id: string;
@@ -29,7 +28,6 @@ export default function PostItem({ post }: { post: Post }) {
       <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
         <div>{timeAgo(post.created_at)}</div>
         <div className="flex items-center gap-3">
-          <TranslateButton postId={post.post_id} />
           <button className="underline" onClick={() => setShow(v => !v)}>
             {show ? 'Hide' : 'Comments'}
           </button>

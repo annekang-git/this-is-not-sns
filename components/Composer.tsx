@@ -1,13 +1,11 @@
 "use client";
 
-import { useI18n } from './I18nProvider';
 import { useEffect, useState } from 'react';
 
 const MIN = 100;
-const MAX = 200;
+const MAX = 1000;
 
 export default function Composer() {
-  const { t } = useI18n();
   const [content, setContent] = useState('');
   const [noNotify, setNoNotify] = useState(false);
   const len = content.trim().length;
@@ -55,23 +53,23 @@ export default function Composer() {
           id="composer"
           className="w-full resize-none rounded border p-3 outline-none focus:ring"
           rows={3}
-          placeholder={t('placeholder_post')}
+          placeholder="Write 100–1000 characters. No photos, videos, or links. Share your honest thoughts."
           value={content}
           onChange={e => setContent(e.target.value)}
         />
         <div className="mt-2 flex items-center justify-between">
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={noNotify} onChange={e => setNoNotify(e.target.checked)} />
-            <span>{t('no_notify')}</span>
+            <span>Do not notify me for this post</span>
           </label>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">{len} / {MAX} {t('characters')}</span>
+            <span className="text-sm text-gray-500">{len} / {MAX} chars</span>
             <button
               onClick={onSend}
               disabled={!valid}
               className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
             >
-              {t('send')}
+              Send
             </button>
           </div>
         </div>
