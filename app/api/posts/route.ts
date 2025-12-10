@@ -6,9 +6,11 @@ import { checkRate } from '@/lib/rateLimit';
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const limit = Math.min(parseInt(searchParams.get('limit') || '20', 10), 50);
+  const offset = Math.max(parseInt(searchParams.get('offset') || '0', 10), 0);
   const posts = await prisma.post.findMany({
     orderBy: { created_at: 'desc' },
     take: limit,
+    skip: offset,
     select: { post_id: true, content: true, created_at: true }
   });
   return Response.json({ posts });
