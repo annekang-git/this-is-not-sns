@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const MIN = 100;
 const MAX = 1000;
@@ -10,6 +10,7 @@ export default function Composer() {
   const [noNotify, setNoNotify] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
   const len = content.trim().length;
   const valid = len >= MIN && len <= MAX && !containsLinks(content);
 
@@ -70,8 +71,23 @@ export default function Composer() {
     return () => ta?.removeEventListener('keydown', handler);
   }, [content, noNotify, sending]);
 
+  // Measure composer height and expose via CSS variable so main content can pad-bottom accordingly
+  useEffect(() => {
+    const update = () => {
+      const el = wrapRef.current;
+      if (!el) return;
+      const h = el.offsetHeight;
+      document.documentElement.style.setProperty('--composer-h', `${h}px`);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('resize', update);
+    };
+  }, []);
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 border-t bg-white">
+    <div ref={wrapRef} className="fixed bottom-0 left-0 right-0 border-t bg-white">
       <div className="mx-auto max-w-2xl px-4 py-3">
         <textarea
           id="composer"
