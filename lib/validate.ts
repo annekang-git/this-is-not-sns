@@ -5,7 +5,7 @@ export function containsLinks(text: string) {
 
 export function validatePost(content: string): { ok: boolean; reason?: string } {
   const t = content.trim();
-  if (t.length < 100 || t.length > 200) return { ok: false, reason: 'length' };
+  if (t.length < 100 || t.length > 1000) return { ok: false, reason: 'length' };
   if (containsLinks(t)) return { ok: false, reason: 'links' };
   return { ok: true };
 }

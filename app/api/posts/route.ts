@@ -20,7 +20,7 @@ export async function POST(req: Request) {
   const notify = Boolean(body?.notify ?? true);
 
   const v = validatePost(content);
-  if (!v.ok) return new Response('Invalid content', { status: 400 });
+  if (!v.ok) return Response.json({ error: 'invalid_content', reason: v.reason }, { status: 400 });
   // Always derive device for rate limiting
   const deviceForRate = await getOrCreateDevice();
   const rl = checkRate(deviceForRate, 'post');
