@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Device {
+  device_id    String         @id @db.Uuid
+  created_at   DateTime       @default(now())
+  posts        Post[]
+  notifications Notification[]
+
+  @@map("devices")
+}
+
+model Post {
+  post_id      String           @id @default(uuid()) @db.Uuid
+  content      String
+  device_id    String?          @db.Uuid
+  created_at   DateTime         @default(now())
+
+  device       Device?          @relation(fields: [device_id], references: [device_id])
+  comments     Comment[]
+  notifications Notification[]
+  translations PostTranslation[]
+
+  @@map("posts")
+  @@index([device_id])
+  @@index([created_at])
+}
+
+model Comment {
+  comment_id   String       @id @default(uuid()) @db.Uuid
+  post_id      String       @db.Uuid
+  content      String
+  created_at   DateTime     @default(now())
+
+  post         Post         @relation(fields: [post_id], references: [post_id])
+  notifications Notification[]
+
+  @@map("comments")
+  @@index([post_id, created_at])
+}
+
+model PostTranslation {
+  id           String     @id @default(uuid()) @db.Uuid
+  post_id      String     @db.Uuid
+  target_lang  String
+  translated   String
+  created_at   DateTime   @default(now())
+
+  post         Post       @relation(fields: [post_id], references: [post_id])
+
+  @@map("post_translations")
+  @@unique([post_id, target_lang])
+}
+
+model Notification {
+  id          String   @id @default(uuid()) @db.Uuid
+  post_id     String   @db.Uuid
+  device_id   String   @db.Uuid
+  comment_id  String   @db.Uuid
+  created_at  DateTime @default(now())
+
+  post        Post     @relation(fields: [post_id], references: [post_id])
+  device      Device   @relation(fields: [device_id], references: [device_id])
+  comment     Comment  @relation(fields: [comment_id], references: [comment_id])
+
+  @@map("notifications")
+  @@index([device_id, created_at])
+  @@index([post_id])
+}
